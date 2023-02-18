@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Juanri\ProgiTest\AuctionCalculator;
+use Juanri\ProgiTest\Main\AuctionCalculator;
 use PHPUnit\Framework\TestCase;
 
 class VehiclePriceCalculatorTest extends TestCase
@@ -10,7 +10,7 @@ class VehiclePriceCalculatorTest extends TestCase
      */
     public function test_auction_calculator_with_given_budget_returns_maximum_amount(array $expectedPrices)
     {
-        $calculatedPrices = AuctionCalculator::calculate();
+        $calculatedPrices = AuctionCalculator::calculate($expectedPrices['budget']);
 
         $this->assertSame($expectedPrices, $calculatedPrices);
     }
@@ -28,10 +28,10 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 10.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 1000,
-                ]
+                    'total_price' => 1000.00,
+                ],
             ],
-            'Budget 670.00' => [
+            'Budget $670.00' => [
                 [
                     'budget' => 670.00,
                     'maximum_vehicle_amount' => 500.00,
@@ -41,8 +41,8 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 5.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 665,
-                ]
+                    'total_price' => 665.00,
+                ],
             ],
             'Budget $670.01' => [
                 [
@@ -55,7 +55,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'storage' => 100.00,
                     ],
                     'total_price' => 670.01,
-                ]
+                ],
             ],
             'Budget $110.00' => [
                 [
@@ -65,10 +65,10 @@ class VehiclePriceCalculatorTest extends TestCase
                         'basic' => 0.00,
                         'special' => 0.00,
                         'association' => 0.00,
-                        'storage' => 0,
+                        'storage' => 0.00,
                     ],
-                    'total_price' => 0,
-                ]
+                    'total_price' => 0.00,
+                ],
             ],
             'Budget $111.00' => [
                 [
@@ -80,8 +80,8 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 0.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 111,
-                ]
+                    'total_price' => 111.00,
+                ],
             ],
             'Budget $116.02' => [
                 [
@@ -94,7 +94,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'storage' => 100.00,
                     ],
                     'total_price' => 116.02,
-                ]
+                ],
             ],
             'Budget $1000000.00' => [
                 [
@@ -107,7 +107,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'storage' => 100.00,
                     ],
                     'total_price' => 1000000.00,
-                ]
+                ],
             ],
         ];
     }
