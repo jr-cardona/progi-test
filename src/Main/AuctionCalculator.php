@@ -82,6 +82,7 @@ final class AuctionCalculator
     public function toArray(): array
     {
         if ($this->maximumPrice > 0) {
+            $this->maximumPrice = floor($this->maximumPrice * 100) / 100;
             return [
                 'budget' => $this->budget,
                 'maximum_vehicle_amount' => $this->maximumPrice,
