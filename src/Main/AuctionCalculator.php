@@ -13,7 +13,7 @@ final class AuctionCalculator
 {
     private float $lowerBound = 0;
 
-    private float $maximumPrice = 0;
+    private float $maximumBid = 0;
 
     private float $upperBound;
 
@@ -43,28 +43,28 @@ final class AuctionCalculator
 
         while ($this->lowerBound <= $this->upperBound) {
             $midpoint = (float)($this->lowerBound + $this->upperBound) / 2;
-            $totalPrice = $this->calculateTotalPrice($midpoint);
-            if (number_format(abs($totalPrice - $this->budget), 2) < $this->tolerance) {
-                $this->maximumPrice = $midpoint;
+            $totalBid = $this->calculateTotalBid($midpoint);
+            if (number_format(abs($totalBid - $this->budget), 2) < $this->tolerance) {
+                $this->maximumBid = $midpoint;
             }
-            if ($totalPrice > $this->budget) {
+            if ($totalBid > $this->budget) {
                 $this->upperBound = $midpoint - $this->tolerance;
             } else {
-                $this->maximumPrice = $midpoint;
+                $this->maximumBid = $midpoint;
                 $this->lowerBound = $midpoint + $this->tolerance;
             }
         }
     }
 
-    private function calculateTotalPrice(float $amount): float
+    private function calculateTotalBid(float $amount): float
     {
         $basicFeeAmount = $this->basicFee->calculate($amount);
         $associateFeeAmount = $this->associateFee->calculate($amount);
         $specialFeeAmount = $this->specialFee->calculate($amount);
         $storageFeeAmount = $this->storageFee->getFee();
-        $totalPrice = $amount + $basicFeeAmount + $associateFeeAmount + $specialFeeAmount + $storageFeeAmount;
+        $totalBid = $amount + $basicFeeAmount + $associateFeeAmount + $specialFeeAmount + $storageFeeAmount;
 
-        return round($totalPrice, 2);
+        return round($totalBid, 2);
     }
 
     private function setUpperBoundEquation(): float
@@ -81,18 +81,18 @@ final class AuctionCalculator
      */
     public function toArray(): array
     {
-        if ($this->maximumPrice > 0) {
-            $this->maximumPrice = floor($this->maximumPrice * 100) / 100;
+        if ($this->maximumBid > 0) {
+            $this->maximumBid = floor($this->maximumBid * 100) / 100;
             return [
                 'budget' => $this->budget,
-                'maximum_vehicle_amount' => $this->maximumPrice,
+                'maximum_vehicle_amount' => $this->maximumBid,
                 'fees' => [
-                    'basic' => $this->basicFee->calculate($this->maximumPrice),
-                    'special' => $this->specialFee->calculate($this->maximumPrice),
-                    'association' => $this->associateFee->calculate($this->maximumPrice),
+                    'basic' => $this->basicFee->calculate($this->maximumBid),
+                    'special' => $this->specialFee->calculate($this->maximumBid),
+                    'association' => $this->associateFee->calculate($this->maximumBid),
                     'storage' => $this->storageFee->getFee(),
                 ],
-                'total_price' => $this->calculateTotalPrice($this->maximumPrice),
+                'total_bid' => $this->calculateTotalBid($this->maximumBid),
             ];
         }
 
@@ -105,7 +105,7 @@ final class AuctionCalculator
                 'association' => 0.0,
                 'storage' => 0.0,
             ],
-            'total_price' => 0.0,
+            'total_bid' => 0.0,
         ];
     }
 }

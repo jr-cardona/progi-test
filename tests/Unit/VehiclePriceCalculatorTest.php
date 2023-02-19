@@ -24,7 +24,7 @@ class VehiclePriceCalculatorTest extends TestCase
     {
         for ($i = 0; $i <= 1000; $i += 0.02) {
             $i = round($i, 2);
-            $totalBid =(new AuctionCalculator($i))->execute()->toArray()['total_price'];
+            $totalBid =(new AuctionCalculator($i))->execute()->toArray()['total_bid'];
             $this->assertGreaterThanOrEqual($totalBid, $i);
         }
 
@@ -46,7 +46,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 10.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 1000.00,
+                    'total_bid' => 1000.00,
                 ],
             ],
             'Budget $670.00' => [
@@ -59,7 +59,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 5.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 665.00,
+                    'total_bid' => 665.00,
                 ],
             ],
             'Budget $670.01' => [
@@ -72,7 +72,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 10.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 670.01,
+                    'total_bid' => 670.01,
                 ],
             ],
             'Budget $110.00' => [
@@ -85,7 +85,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 0.00,
                         'storage' => 0.00,
                     ],
-                    'total_price' => 0.00,
+                    'total_bid' => 0.00,
                 ],
             ],
             'Budget $111.00' => [
@@ -98,7 +98,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 0.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 111.00,
+                    'total_bid' => 111.00,
                 ],
             ],
             'Budget $116.02' => [
@@ -111,7 +111,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 5.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 116.02,
+                    'total_bid' => 116.02,
                 ],
             ],
             'Budget $1000000.00' => [
@@ -124,7 +124,7 @@ class VehiclePriceCalculatorTest extends TestCase
                         'association' => 20.00,
                         'storage' => 100.00,
                     ],
-                    'total_price' => 1000000.00,
+                    'total_bid' => 1000000.00,
                 ],
             ],
         ];
