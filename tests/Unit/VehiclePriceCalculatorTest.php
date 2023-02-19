@@ -20,6 +20,16 @@ class VehiclePriceCalculatorTest extends TestCase
         $this->assertSame($expectedPrices, $calculatedPrices);
     }
 
+    public function test_auction_calculator_with_loop_of_budgets_does_not_overpass_maximum_amount(): void
+    {
+        for ($i = 0; $i <= 1000; $i += 0.02) {
+            $i = round($i, 2);
+            $totalBid = AuctionCalculator::create($i)->execute()['total_price'];
+            $this->assertGreaterThanOrEqual($totalBid, $i);
+        }
+
+    }
+
     /**
      * @return array<string, array<array-key, array<string, array<string, float>|float>>>
      */
