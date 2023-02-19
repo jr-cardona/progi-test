@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Juanri\ProgiTest\Main\AuctionCalculator;
 use PHPUnit\Framework\TestCase;

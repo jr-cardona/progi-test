@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Juanri\ProgiTest\Fees;
 
@@ -8,7 +10,7 @@ final readonly class BasicFee implements Fee, HasMinimalFee
         private float $min = 10,
         private float $max = 50,
         private float $percent = 0.10,
-    ){
+    ) {
     }
 
     public function calculate(float $amount): float
