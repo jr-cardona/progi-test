@@ -27,7 +27,6 @@ class VehiclePriceCalculatorTest extends TestCase
             $totalBid =(new AuctionCalculator($i))->execute()->toArray()['total_bid'];
             $this->assertGreaterThanOrEqual($totalBid, $i);
         }
-
     }
 
     /**
