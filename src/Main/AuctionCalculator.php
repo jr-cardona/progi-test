@@ -32,11 +32,14 @@ final class AuctionCalculator
 
 
 
-    public static function create(...$params): self
+    public static function create(float ...$params): self
     {
         return new self(...$params);
     }
 
+    /**
+     * @return array<string, array<string, float>|float>
+     */
     public function execute(): array
     {
         $maxVehicleAmount = $this->getMaxVehicleAmount();

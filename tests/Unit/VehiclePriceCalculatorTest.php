@@ -8,15 +8,19 @@ use PHPUnit\Framework\TestCase;
 class VehiclePriceCalculatorTest extends TestCase
 {
     /**
+     * @param array<string, float> $expectedPrices
      * @dataProvider budgetsDataProvider()
      */
-    public function test_auction_calculator_with_given_budget_returns_maximum_amount(array $expectedPrices)
+    public function test_auction_calculator_with_given_budget_returns_maximum_amount(array $expectedPrices): void
     {
         $calculatedPrices = AuctionCalculator::create($expectedPrices['budget'])->execute();
 
         $this->assertSame($expectedPrices, $calculatedPrices);
     }
 
+    /**
+     * @return array<string, array<array-key, array<string, array<string, float>|float>>>
+     */
     public function budgetsDataProvider(): array
     {
         return [

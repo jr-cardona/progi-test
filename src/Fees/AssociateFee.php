@@ -8,11 +8,15 @@ final readonly class AssociateFee implements Fee, HasMinimalFee
 {
     private int $lastFee;
 
+    /**
+     * @param array<array-key, int> $limits
+     * @param array<array-key, int> $fees
+     */
     public function __construct(
         private array $limits = [1, 500, 1000, 3000],
         private array $fees = [0, 5, 10, 15, 20]
     ) {
-        $this->lastFee = end($fees);
+        $this->lastFee = (int) end($fees);
     }
 
     public function calculate(float $amount): float
