@@ -11,6 +11,7 @@ on a car auction with a given budget based in specific fees.
         - [SSH](#ssh)
         - [HTTPS](#https)
 - [Usage](#usage)
+- [Technical details](#technical-details)
 
 ## Installation
 ### Clone the repository
@@ -54,3 +55,32 @@ Run tests
 ```
 docker-compose exec progi-test bash -c "composer test"
 ```
+
+## Technical details
+### PHPStan
+This code complies with actual max level (9) of [PHPStan](https://phpstan.org/). 
+
+This ensures that no code smell is present.
+
+Here’s a brief overview of what’s checked on each level:
+
+0. basic checks, unknown classes, unknown functions, unknown methods called on $this, wrong number of arguments passed to those methods and functions, always undefined variables
+1. possibly undefined variables, unknown magic methods and properties on classes with __call and __get
+2. unknown methods checked on all expressions (not just $this), validating PHPDocs
+3. return types, types assigned to properties
+4. basic dead code checking - always false instanceof and other type checks, dead else branches, unreachable code after return; etc.
+5. checking types of arguments passed to methods and functions
+6. missing typehints
+7. partially wrong union types - if you call a method that only exists on some types in a union type
+8. report calling methods and accessing properties on nullable types
+9. strict about the mixed type - the only allowed operation you can do with it is to pass it to another mixed
+
+### PSR
+This code also complies with the following PHP Standard Recommendations:
+- [PSR-1](https://www.php-fig.org/psr/psr-1) (Basic Coding Standard)
+- [PSR-4](https://www.php-fig.org/psr/psr-4) (Autoloading Standard)
+- [PSR-12](https://www.php-fig.org/psr/psr-12) (Extended Coding Style Guide)
+
+### Conventional commits
+The standard used to make every commit of this application:
+https://www.conventionalcommits.org/en/v1.0.0/
