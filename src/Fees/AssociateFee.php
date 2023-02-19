@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Juanri\ProgiTest\Fees;
 
-final readonly class AssociateFee implements Fee, HasMinimalFee
+final readonly class AssociateFee implements Fee
 {
     private int $lastFee;
 
@@ -32,10 +32,5 @@ final readonly class AssociateFee implements Fee, HasMinimalFee
         }
 
         return $this->lastFee;
-    }
-
-    public function getMinimalFee(): float
-    {
-        return $this->fees[0];
     }
 }

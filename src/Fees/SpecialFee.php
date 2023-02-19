@@ -12,7 +12,7 @@ final readonly class SpecialFee implements Fee
 
     public function calculate(float $amount): float
     {
-        return $amount * $this->percent;
+        return round($amount * $this->percent, 2);
     }
 
     public function getPercent(): float

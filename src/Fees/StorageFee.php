@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Juanri\ProgiTest\Fees;
 
-final readonly class StorageFee implements Fee
+final readonly class StorageFee
 {
-    public function calculate(float $amount): float
-    {
-        if ($amount === 0.0) {
-            return 0;
-        }
+    public function __construct(
+        private float $fee = 100,
+    ) {
+    }
 
-        return 100;
+    public function getFee(): float
+    {
+        return $this->fee;
     }
 }

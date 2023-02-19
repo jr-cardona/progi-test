@@ -15,19 +15,25 @@ final class AuctionCalculator
 
     private float $upperBound;
 
+    private float $calculatedBasicFeeAmount = 0;
+
+    private float $calculatedAssociateFeeAmount = 0;
+
+    private float $calculatedSpecialFeeAmount = 0;
+
+    private float $calculatedTotalPrice = 0;
+
+    private float $calculatedStoragePrice = 0;
+
     public function __construct(
         private readonly float $budget,
-        private readonly float $tolerance = 0.001,
+        private readonly float $tolerance = 0.0001,
         private readonly BasicFee $basicFee = new BasicFee(),
         private readonly AssociateFee $associateFee = new AssociateFee(),
         private readonly SpecialFee $specialFee = new SpecialFee(),
         private readonly StorageFee $storageFee = new StorageFee()
     ) {
-        $minBasicFee = $this->basicFee->getMinimalFee();
-        $minAssociateFee = $this->associateFee->getMinimalFee();
-        $specialFeePercent = $this->specialFee->getPercent();
-
-        $this->upperBound = ($this->budget - $minBasicFee - $minAssociateFee) / (1 + $specialFeePercent);
+        $this->upperBound = $this->getUpperBoundEquation();
     }
 
 
@@ -48,17 +54,21 @@ final class AuctionCalculator
             'budget' => $this->budget,
             'maximum_vehicle_amount' => $maxVehicleAmount,
             'fees' => [
-                'basic' => round($this->basicFee->calculate($maxVehicleAmount), 2),
-                'special' => round($this->specialFee->calculate($maxVehicleAmount), 2),
-                'association' => round($this->associateFee->calculate($maxVehicleAmount), 2),
-                'storage' => round($this->storageFee->calculate($maxVehicleAmount), 2),
+                'basic' => $this->calculatedBasicFeeAmount,
+                'special' => $this->calculatedSpecialFeeAmount,
+                'association' => $this->calculatedAssociateFeeAmount,
+                'storage' => $this->calculatedStoragePrice,
             ],
-            'total_price' => $this->calculateTotalPrice($maxVehicleAmount),
+            'total_price' => $this->calculatedTotalPrice,
         ];
     }
 
     private function getMaxVehicleAmount(): float
     {
+        if ($this->upperBound <= 0) {
+            return 0;
+        }
+
         while ($this->lowerBound <= $this->upperBound) {
             $midpoint = (float)($this->lowerBound + $this->upperBound) / 2;
             $totalPrice = $this->calculateTotalPrice($midpoint);
@@ -78,12 +88,29 @@ final class AuctionCalculator
 
     private function calculateTotalPrice(float $amount): float
     {
-        $basicFeeAmount = $this->basicFee->calculate($amount);
-        $associateFeeAmount = $this->associateFee->calculate($amount);
-        $specialFeeAmount = $this->specialFee->calculate($amount);
-        $storageFeeAmount = $this->storageFee->calculate($amount);
-        $totalPrice = $amount + $basicFeeAmount + $associateFeeAmount + $specialFeeAmount + $storageFeeAmount;
+        $this->calculatedBasicFeeAmount = $this->basicFee->calculate($amount);
+        $this->calculatedAssociateFeeAmount = $this->associateFee->calculate($amount);
+        $this->calculatedSpecialFeeAmount = $this->specialFee->calculate($amount);
+        $this->calculatedStoragePrice = $this->storageFee->getFee();
 
-        return round($totalPrice, 2);
+        $this->calculatedTotalPrice = round(
+            $amount
+            + $this->calculatedStoragePrice
+            + $this->calculatedBasicFeeAmount
+            + $this->calculatedAssociateFeeAmount
+            + $this->calculatedSpecialFeeAmount,
+            2
+        );
+
+        return $this->calculatedTotalPrice;
+    }
+
+    private function getUpperBoundEquation(): float
+    {
+        $minStorageFee = $this->storageFee->getFee();
+        $minBasicFee = $this->basicFee->calculate(0);
+        $minAssociateFee = $this->associateFee->calculate(0);
+        $specialFeePercent = $this->specialFee->getPercent();
+        return ($this->budget - $minStorageFee - $minBasicFee - $minAssociateFee) / (1 + $specialFeePercent);
     }
 }
