@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Unit;
+
 use Juanri\ProgiTest\Main\AuctionCalculator;
 use PHPUnit\Framework\TestCase;
 
