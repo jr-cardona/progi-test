@@ -22,5 +22,19 @@
             "name": "Juan Cardona",
             "email": "jr.cardona.az@gmail.com"
         }
-    ]
+    ],
+    "scripts": {
+        "clean-code-check": [
+            "./vendor/bin/php-cs-fixer fix ./ -vvv --dry-run --show-progress=dots"
+        ],
+        "clean-code-fix": [
+            "./vendor/bin/php-cs-fixer fix ./ -vvv --show-progress=dots"
+        ],
+        "test": [
+            "./vendor/bin/phpunit --no-coverage"
+        ],
+        "phpstan": [
+            "./vendor/bin/phpstan analyse ./src ./tests --level max"
+        ]
+    }
 }
