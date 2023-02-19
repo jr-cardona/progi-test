@@ -15,7 +15,7 @@ class VehiclePriceCalculatorTest extends TestCase
      */
     public function test_auction_calculator_with_given_budget_returns_maximum_amount(array $expectedPrices): void
     {
-        $calculatedPrices = AuctionCalculator::create($expectedPrices['budget'])->execute();
+        $calculatedPrices = (new AuctionCalculator($expectedPrices['budget']))->execute()->toArray();
 
         $this->assertSame($expectedPrices, $calculatedPrices);
     }
@@ -24,7 +24,7 @@ class VehiclePriceCalculatorTest extends TestCase
     {
         for ($i = 0; $i <= 1000; $i += 0.02) {
             $i = round($i, 2);
-            $totalBid = AuctionCalculator::create($i)->execute()['total_price'];
+            $totalBid =(new AuctionCalculator($i))->execute()->toArray()['total_price'];
             $this->assertGreaterThanOrEqual($totalBid, $i);
         }
 

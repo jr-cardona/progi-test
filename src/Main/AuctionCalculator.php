@@ -13,6 +13,8 @@ final class AuctionCalculator
 {
     private float $lowerBound = 0;
 
+    private float $maximumPrice = 0;
+
     private float $upperBound;
 
     public function __construct(
@@ -23,47 +25,35 @@ final class AuctionCalculator
         private readonly SpecialFee $specialFee = new SpecialFee(),
         private readonly StorageFee $storageFee = new StorageFee()
     ) {
-        $this->upperBound = $this->getUpperBoundEquation();
+        $this->upperBound = $this->setUpperBoundEquation();
     }
 
-
-
-    public static function create(float ...$params): self
+    public function execute(): self
     {
-        return new self(...$params);
+        $this->getMaxVehicleAmount();
+
+        return $this;
     }
 
-    /**
-     * @return array<string, array<string, float>|float>
-     */
-    public function execute(): array
-    {
-        $maxVehicleAmount = $this->getMaxVehicleAmount();
-
-        return $this->getResponseByMaxVehicleAmount($maxVehicleAmount);
-    }
-
-    private function getMaxVehicleAmount(): float
+    private function getMaxVehicleAmount(): void
     {
         if ($this->upperBound <= 0) {
-            return 0;
+            return;
         }
 
         while ($this->lowerBound <= $this->upperBound) {
             $midpoint = (float)($this->lowerBound + $this->upperBound) / 2;
             $totalPrice = $this->calculateTotalPrice($midpoint);
-
-            if (abs($totalPrice - $this->budget) <= $this->tolerance) {
-                return round($midpoint, 2);
+            if (number_format(abs($totalPrice - $this->budget), 2) < $this->tolerance) {
+                $this->maximumPrice = $midpoint;
             }
             if ($totalPrice > $this->budget) {
                 $this->upperBound = $midpoint - $this->tolerance;
             } else {
+                $this->maximumPrice = $midpoint;
                 $this->lowerBound = $midpoint + $this->tolerance;
             }
         }
-
-        return round($this->upperBound, 2);
     }
 
     private function calculateTotalPrice(float $amount): float
@@ -77,7 +67,7 @@ final class AuctionCalculator
         return round($totalPrice, 2);
     }
 
-    private function getUpperBoundEquation(): float
+    private function setUpperBoundEquation(): float
     {
         $minStorageFee = $this->storageFee->getFee();
         $minBasicFee = $this->basicFee->calculate(0);
@@ -86,19 +76,22 @@ final class AuctionCalculator
         return ($this->budget - $minStorageFee - $minBasicFee - $minAssociateFee) / (1 + $specialFeePercent);
     }
 
-    private function getResponseByMaxVehicleAmount(float $maxVehicleAmount): array
+    /**
+     * @return array<string, array<string, float>|float>
+     */
+    public function toArray(): array
     {
-        if ($maxVehicleAmount > 0) {
+        if ($this->maximumPrice > 0) {
             return [
                 'budget' => $this->budget,
-                'maximum_vehicle_amount' => $maxVehicleAmount,
+                'maximum_vehicle_amount' => $this->maximumPrice,
                 'fees' => [
-                    'basic' => $this->basicFee->calculate($maxVehicleAmount),
-                    'special' => $this->specialFee->calculate($maxVehicleAmount),
-                    'association' => $this->associateFee->calculate($maxVehicleAmount),
+                    'basic' => $this->basicFee->calculate($this->maximumPrice),
+                    'special' => $this->specialFee->calculate($this->maximumPrice),
+                    'association' => $this->associateFee->calculate($this->maximumPrice),
                     'storage' => $this->storageFee->getFee(),
                 ],
-                'total_price' => $this->calculateTotalPrice($maxVehicleAmount),
+                'total_price' => $this->calculateTotalPrice($this->maximumPrice),
             ];
         }
 
